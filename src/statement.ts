@@ -19,7 +19,7 @@ export function statement(
 ) {
   let totalAmount = 0;
   let volumeCredits = 0;
-  let result = `Statement for ${summary.customer}\n`;
+  let statementOutput = renderStatementHeader(summary.customer);
 
   for (let perf of summary.performances) {
     const play = plays[perf.playID];
@@ -28,16 +28,20 @@ export function statement(
     volumeCredits += getExtraCredits(play.type, perf.audience);
 
     // print line for this order
-    result += lineOrderDescription({
+    statementOutput += renderStatementLineOrder({
       name: play.name,
       amount: thisAmount,
       audience: perf.audience,
     });
     totalAmount += thisAmount;
   }
-  result += `Amount owed is ${formatAmount(totalAmount)}\n`;
-  result += `You earned ${volumeCredits} credits\n`;
-  return result;
+  statementOutput += renderFooter(totalAmount, volumeCredits);
+
+  return statementOutput;
+}
+
+function renderStatementHeader(customer: string) {
+  return `Statement for ${customer}\n`;
 }
 
 function getAmountPerType(type: string, performanceAudience: number) {
@@ -72,7 +76,7 @@ function getExtraCredits(type: string, performanceAudience: number) {
   return extraCredits;
 }
 
-function lineOrderDescription({
+function renderStatementLineOrder({
   name,
   amount,
   audience,
@@ -91,4 +95,11 @@ function formatAmount(amount: number) {
     minimumFractionDigits: 2,
   }).format;
   return format(amount / 100);
+}
+
+function renderFooter(totalAmount: number, volumeCredits: number) {
+  let footer = `Amount owed is ${formatAmount(totalAmount)}\n`;
+  footer += `You earned ${volumeCredits} credits\n`;
+
+  return footer;
 }
