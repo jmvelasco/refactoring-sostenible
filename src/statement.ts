@@ -1,22 +1,27 @@
 import { getAmountPerType } from "./utils/amount";
 import { getExtraCredits } from "./utils/credits";
-import { renderFooter, renderStatementHeader, renderStatementLineOrder } from "./utils/render";
+import { HTMLRenderer, TextRenderer } from "./utils/renderer.class";
 
 export function statement(
   summary: PerformanceSummary,
-  plays: Record<string, Play>
+  plays: Record<string, Play>,
+  outputFormat = "text"
 ) {
   let totalAmount = 0;
   let volumeCredits = 0;
 
-  let statementOutput = renderStatementHeader(summary.customer);
+  const renderer = outputFormat === "text" 
+    ? new TextRenderer() 
+    : new HTMLRenderer();
+
+  let statementOutput = renderer.renderStatementHeader(summary.customer);
 
   for (const performance of summary.performances) {
     const play = plays[performance.playID];
     const thisAmount = getAmountPerType(play.type, performance.audience);
     volumeCredits += getExtraCredits(play.type, performance.audience);
 
-    statementOutput += renderStatementLineOrder({
+    statementOutput += renderer.renderStatementLineOrder({
       name: play.name,
       amount: thisAmount,
       audience: performance.audience,
@@ -25,7 +30,7 @@ export function statement(
     totalAmount += thisAmount;
   }
 
-  statementOutput += renderFooter(totalAmount, volumeCredits);
+  statementOutput += renderer.renderFooter(totalAmount, volumeCredits);
 
   return statementOutput;
 }

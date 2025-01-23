@@ -8,6 +8,7 @@ function getAmountPerType(type: string, performanceAudience: number) {
         amount += 1000 * (performanceAudience - 30);
       }
       break;
+      
     case "comedy":
       amount = 30000;
       if (performanceAudience > 20) {
@@ -15,6 +16,7 @@ function getAmountPerType(type: string, performanceAudience: number) {
       }
       amount += 300 * performanceAudience;
       break;
+    
     default:
       throw new Error(`unknown type: ${type}`);
   }
