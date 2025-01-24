@@ -1,6 +1,7 @@
+import HTMLRenderer from "./features/renderer/htmlRenderer.class";
+import TextRenderer from "./features/renderer/plainTextRenderer.class";
 import { getAmountPerType } from "./utils/amount";
 import { getExtraCredits } from "./utils/credits";
-import { HTMLRenderer, TextRenderer } from "./utils/renderer.class";
 
 export function statement(
   summary: PerformanceSummary,
