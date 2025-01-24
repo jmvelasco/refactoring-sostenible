@@ -5,7 +5,7 @@ import { HTMLRenderer, TextRenderer } from "./utils/renderer.class";
 export function statement(
   summary: PerformanceSummary,
   plays: Record<string, Play>,
-  outputFormat = "text"
+  outputFormat: "text" | "html" = "text"
 ) {
   let totalAmount = 0;
   let volumeCredits = 0;
