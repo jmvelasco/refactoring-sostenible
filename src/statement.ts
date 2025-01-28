@@ -1,7 +1,26 @@
-import HTMLRenderer from "./features/renderer/htmlRenderer.class";
-import TextRenderer from "./features/renderer/plainTextRenderer.class";
+
+
+
+import { HTMLRenderer, TextRenderer } from "./features/renderer";
 import { getAmountPerType } from "./utils/amount";
 import { getExtraCredits } from "./utils/credits";
+
+type Play = {
+  name: string;
+  type: string;
+};
+
+type Performance = {
+  playID: string;
+  audience: number;
+};
+
+type PerformanceSummary = {
+  customer: string;
+  performances: Performance[];
+};
+
+
 
 export function statement(
   summary: PerformanceSummary,

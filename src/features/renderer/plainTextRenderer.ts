@@ -1,7 +1,8 @@
-import Renderer from "./renderer.class";
+import { formatAmount } from "../../utils/amount";
+import Renderer from "./renderer";
 
 
-class TextRenderer extends Renderer {
+class TextRenderer implements Renderer {
   renderStatementLineOrder({
     name,
     amount,
@@ -11,11 +12,11 @@ class TextRenderer extends Renderer {
     amount: number;
     audience: number;
   }): string {
-    return ` ${name}: ${this.formatAmount(amount)} (${audience} seats)\n`;
+    return ` ${name}: ${formatAmount(amount)} (${audience} seats)\n`;
   }
 
   renderFooter(totalAmount: number, volumeCredits: number): string {
-    let footer = `Amount owed is ${this.formatAmount(totalAmount)}\n`;
+    let footer = `Amount owed is ${formatAmount(totalAmount)}\n`;
     footer += `You earned ${volumeCredits} credits\n`;
 
     return footer;
