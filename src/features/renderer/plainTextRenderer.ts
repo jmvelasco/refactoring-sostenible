@@ -1,28 +1,23 @@
-import { formatAmount } from "../../utils/amount";
-import Renderer from "./renderer";
+import { OrderDetails, StatementRendererInterface } from "./statementRenderer";
 
 
-class TextRenderer implements Renderer {
-  renderStatementLineOrder({
+class TextRenderer implements StatementRendererInterface {
+  lineOrder({
     name,
     amount,
     audience,
-  }: {
-    name: string;
-    amount: number;
-    audience: number;
-  }): string {
-    return ` ${name}: ${formatAmount(amount)} (${audience} seats)\n`;
+  }: OrderDetails): string {
+    return ` ${name}: ${amount} (${audience} seats)\n`;
   }
 
-  renderFooter(totalAmount: number, volumeCredits: number): string {
-    let footer = `Amount owed is ${formatAmount(totalAmount)}\n`;
+  footer(totalAmount: string, volumeCredits: number): string {
+    let footer = `Amount owed is ${totalAmount}\n`;
     footer += `You earned ${volumeCredits} credits\n`;
 
     return footer;
   }
 
-  renderStatementHeader(customer: string): string {
+  header(customer: string): string {
     return `Statement for ${customer}\n`;
   }
 }

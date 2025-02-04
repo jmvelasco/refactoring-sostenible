@@ -1,3 +1,4 @@
+import { OutputFormat } from "../src/features/renderer/statementRenderer";
 import { statement } from "../src/statement";
 import {
   createAnExamplePlays,
@@ -13,7 +14,7 @@ test("generates a detailed statement for a given performance summary with mixed 
   const plays = createAnExamplePlays();
 
   //assert
-  expect(statement(aSummary, plays)).toEqual(`Statement for BigCo
+  expect(statement(aSummary, plays, OutputFormat.TEXT)).toEqual(`Statement for BigCo
  Hamlet: $650.00 (55 seats)
  As You Like It: $580.00 (35 seats)
  Othello: $500.00 (40 seats)
@@ -28,7 +29,7 @@ test("generates a detailed HTML statement for a given performance summary with u
   //act
   const plays = createAnExamplePlays();
   //assert
-  expect(statement(aSummary, plays, 'html')).toEqual(`<h1>Statement for BigCo</h1><p>&nbsp;Hamlet: $650.00 (55 seats)</p><p>&nbsp;As You Like It: $580.00 (35 seats)</p><p>&nbsp;Othello: $500.00 (40 seats)</p><p>Amount owed is $1,730.00</p><p>You earned 47 credits</p>`);
+  expect(statement(aSummary, plays, OutputFormat.HTML)).toEqual(`<h1>Statement for BigCo</h1><p>Hamlet: $650.00 (55 seats)</p><p>As You Like It: $580.00 (35 seats)</p><p>Othello: $500.00 (40 seats)</p><p>Amount owed is $1,730.00</p><p>You earned 47 credits</p>`);
 });
 
 test("does not allow an performance summary with unknown play types", () => {
@@ -37,5 +38,5 @@ test("does not allow an performance summary with unknown play types", () => {
   //act
   const plays = createAnotherExamplePlays();
   //assert
-  expect(() => statement(invoice, plays)).toThrow(/unknown type/);
+  expect(() => statement(invoice, plays, OutputFormat.TEXT)).toThrow(/unknown type/);
 });

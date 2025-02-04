@@ -1,8 +1,12 @@
-
-
-
-import { HTMLRenderer, TextRenderer } from "./features/renderer";
-import { getAmountPerType } from "./utils/amount";
+// import { HTMLRenderer, TextRenderer } from "./features/renderer";
+import {
+  HTMLRenderer,
+  OutputFormat,
+  PlainTextRenderer,
+  StatementRenderer,
+  StatementRendererType,
+} from "./features/renderer";
+import { getAmountPerType, getUSDCurrencyAmount } from "./utils/amount";
 import { getExtraCredits } from "./utils/credits";
 
 type Play = {
@@ -20,38 +24,41 @@ type PerformanceSummary = {
   performances: Performance[];
 };
 
-
-
 export function statement(
   summary: PerformanceSummary,
   plays: Record<string, Play>,
-  outputFormat: "text" | "html" = "text"
+  outputFormat: StatementRendererType
 ) {
+  
+  const rendererFormat = {
+    [OutputFormat.TEXT]: new PlainTextRenderer(),
+    [OutputFormat.HTML]: new HTMLRenderer(),
+  }[outputFormat]
+
+  if (!rendererFormat) {
+    throw new Error(`Invalid format: ${outputFormat}`);
+  }
+
   let totalAmount = 0;
   let volumeCredits = 0;
+  const renderer = new StatementRenderer(rendererFormat);
 
-  const renderer = outputFormat === "text" 
-    ? new TextRenderer() 
-    : new HTMLRenderer();
-
-  let statementOutput = renderer.renderStatementHeader(summary.customer);
-
+  let statementOutput = renderer.header(summary.customer);
   for (const performance of summary.performances) {
     const play = plays[performance.playID];
     const thisAmount = getAmountPerType(play.type, performance.audience);
     volumeCredits += getExtraCredits(play.type, performance.audience);
 
-    statementOutput += renderer.renderStatementLineOrder({
+    statementOutput += renderer.lineOrder({
       name: play.name,
-      amount: thisAmount,
+      amount: getUSDCurrencyAmount(thisAmount),
       audience: performance.audience,
     });
 
     totalAmount += thisAmount;
   }
 
-  statementOutput += renderer.renderFooter(totalAmount, volumeCredits);
+  statementOutput += renderer.footer(getUSDCurrencyAmount(totalAmount), volumeCredits);
 
   return statementOutput;
 }
-

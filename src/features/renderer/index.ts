@@ -1,4 +1,5 @@
 import HTMLRenderer from "./htmlRenderer";
-import TextRenderer from "./plainTextRenderer";
+import PlainTextRenderer from "./plainTextRenderer";
+export * from "./statementRenderer";
 
-export { HTMLRenderer, TextRenderer };
+export { HTMLRenderer, PlainTextRenderer };
