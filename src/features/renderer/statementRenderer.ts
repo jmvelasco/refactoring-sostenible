@@ -1,10 +1,11 @@
+import TextRenderer from "./plainTextRenderer";
+import HTMLRenderer from "./htmlRenderer";
+
 type OrderDetails = {
   name: string;
   amount: string;
   audience: number;
 };
-
-type StatementRendererType = OutputFormat;
 
 const enum OutputFormat {
   TEXT = "text",
@@ -39,10 +40,18 @@ class StatementRenderer {
   
 }
 
+const createRenderer = (format: OutputFormat) => {
+  switch (format) {
+    case OutputFormat.TEXT:
+      return new StatementRenderer(new TextRenderer());
+    case OutputFormat.HTML:
+      return new StatementRenderer(new HTMLRenderer());
+  }
+};
+
 export {
   OutputFormat,
   OrderDetails,
-  StatementRenderer,
-  StatementRendererInterface,
-  StatementRendererType,
+  createRenderer,
+  StatementRendererInterface
 };

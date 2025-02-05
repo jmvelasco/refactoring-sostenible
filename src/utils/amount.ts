@@ -24,7 +24,7 @@ function getAmountPerType(type: string, performanceAudience: number) {
   return amount;
 }
 
-function getUSDCurrencyAmount(amount: number) {
+function formatToUSD(amount: number) {
   const format = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -33,5 +33,5 @@ function getUSDCurrencyAmount(amount: number) {
   return format(amount / 100);
 }
 
-export { getUSDCurrencyAmount, getAmountPerType };
+export { formatToUSD, getAmountPerType };
 

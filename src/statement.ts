@@ -1,12 +1,8 @@
-// import { HTMLRenderer, TextRenderer } from "./features/renderer";
 import {
-  HTMLRenderer,
+  createRenderer,
   OutputFormat,
-  PlainTextRenderer,
-  StatementRenderer,
-  StatementRendererType,
 } from "./features/renderer";
-import { getAmountPerType, getUSDCurrencyAmount } from "./utils/amount";
+import { getAmountPerType, formatToUSD } from "./utils/amount";
 import { getExtraCredits } from "./utils/credits";
 
 type Play = {
@@ -27,23 +23,19 @@ type PerformanceSummary = {
 export function statement(
   summary: PerformanceSummary,
   plays: Record<string, Play>,
-  outputFormat: StatementRendererType
+  outputFormat: OutputFormat
 ) {
   
-  const rendererFormat = {
-    [OutputFormat.TEXT]: new PlainTextRenderer(),
-    [OutputFormat.HTML]: new HTMLRenderer(),
-  }[outputFormat]
-
-  if (!rendererFormat) {
+  if (!outputFormat) {
     throw new Error(`Invalid format: ${outputFormat}`);
   }
 
-  let totalAmount = 0;
-  let volumeCredits = 0;
-  const renderer = new StatementRenderer(rendererFormat);
+  const renderer = createRenderer(outputFormat);
 
   let statementOutput = renderer.header(summary.customer);
+
+  let totalAmount = 0;
+  let volumeCredits = 0;
   for (const performance of summary.performances) {
     const play = plays[performance.playID];
     const thisAmount = getAmountPerType(play.type, performance.audience);
@@ -51,14 +43,14 @@ export function statement(
 
     statementOutput += renderer.lineOrder({
       name: play.name,
-      amount: getUSDCurrencyAmount(thisAmount),
+      amount: formatToUSD(thisAmount),
       audience: performance.audience,
     });
 
     totalAmount += thisAmount;
   }
 
-  statementOutput += renderer.footer(getUSDCurrencyAmount(totalAmount), volumeCredits);
+  statementOutput += renderer.footer(formatToUSD(totalAmount), volumeCredits);
 
   return statementOutput;
 }
