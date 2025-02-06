@@ -1,4 +1,3 @@
-import { OutputFormat } from "../src/features/renderer/statementRenderer";
 import { statement } from "../src/statement";
 import {
   createAnExamplePlays,
@@ -6,6 +5,7 @@ import {
   createAnotherPerformanceSummary,
   createAnPerformanceSummary,
 } from "./creators";
+import {OutputFormat} from "../src/services";
 
 test("generates a detailed statement for a given performance summary with mixed play types", () => {
   //arrange
