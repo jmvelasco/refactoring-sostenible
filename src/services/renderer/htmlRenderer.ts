@@ -1,6 +1,6 @@
-import { StatementRendererInterface, OrderDetails } from "./interface";
+import { StatementRenderer, OrderDetails } from "./interface";
 
-class HTMLRenderer implements StatementRendererInterface {
+class HTMLRenderer implements StatementRenderer {
   header(customer: string): string {
     return `<h1>Statement for ${customer}</h1>`;
   }

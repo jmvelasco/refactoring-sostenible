@@ -5,10 +5,10 @@ type OrderDetails = {
     audience: number;
 };
 
-interface StatementRendererInterface {
+interface StatementRenderer {
     header(customer: string): string;
     lineOrder({name, amount, audience}: OrderDetails): string;
     footer(totalAmount: string, volumeCredits: number): string;
 }
 
-export { StatementRendererInterface, OrderDetails };
+export { StatementRenderer, OrderDetails };

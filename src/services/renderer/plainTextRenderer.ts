@@ -1,6 +1,6 @@
-import { OrderDetails, StatementRendererInterface } from "./interface";
+import { OrderDetails, StatementRenderer } from "./interface";
 
-class TextRenderer implements StatementRendererInterface {
+class TextRenderer implements StatementRenderer {
   lineOrder({
     name,
     amount,
