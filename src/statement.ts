@@ -1,36 +1,70 @@
+import { getAmountPerType } from "./features/performance/getAmountPerType";
+import { getCredits } from "./features/performance/getCredits";
+import { getTotalAmount } from "./features/performance/getTotalAmount";
+import {
+  StatementPrinter,
+  OutputFormat,
+} from "./features/printer/StatementPrinter";
+import { formatToUSD } from "./features/printer/formatToUSD";
 
-import type {PerformanceSummary, Play} from "./statement.types";
-import {getAmountPerType, getTotalAmount, formatToUSD, getCredits, createRenderer, OutputFormat} from "./services";
+export type Play = {
+  name: string;
+  type: string;
+};
+
+export type Performance = {
+  playID: string;
+  audience: number;
+};
+
+export type PerformanceSummary = {
+  customer: string;
+  performances: Performance[];
+};
+
+export type Statement = {
+  customer: string;
+  performances: {
+    name: string;
+    amount: string;
+    audience: number;
+  }[];
+  amount: string;
+  credits: number;
+};
 
 export function statement(
-    summary: PerformanceSummary,
-    plays: Record<string, Play>,
-    outputFormat: OutputFormat
+  summary: PerformanceSummary,
+  plays: Record<string, Play>,
+  outputFormat: OutputFormat
 ) {
+  if (!outputFormat) {
+    throw new Error(`Invalid format: ${outputFormat}`);
+  }
 
-    if (!outputFormat) {
-        throw new Error(`Invalid format: ${outputFormat}`);
-    }
+  const statement = createStatement(summary, plays);
 
-    const renderer = createRenderer(outputFormat);
-    let statementOutput = renderer.header(summary.customer);
+  const printer = new StatementPrinter(outputFormat);
+  const statementOutput = printer.print(statement);
 
-    for (const performance of summary.performances) {
-        const play = plays[performance.playID];
-        const thisAmount = getAmountPerType(play.type, performance.audience);
-
-        statementOutput += renderer.lineOrder({
-            name: play.name,
-            amount: formatToUSD(thisAmount),
-            audience: performance.audience,
-        });
-
-    }
-
-    const totalAmount = getTotalAmount(summary, plays);
-    const volumeCredits = getCredits(summary, plays);
-
-    statementOutput += renderer.footer(formatToUSD(totalAmount), volumeCredits);
-
-    return statementOutput;
+  return statementOutput;
 }
+
+const createStatement = (
+  summary: PerformanceSummary,
+  plays: Record<string, Play>
+): Statement => {
+  return {
+    customer: summary.customer,
+    performances: summary.performances.map((performance) => {
+      const play = plays[performance.playID];
+      return {
+        name: play.name,
+        amount: formatToUSD(getAmountPerType(play.type, performance.audience)),
+        audience: performance.audience,
+      };
+    }),
+    amount: formatToUSD(getTotalAmount(summary, plays)),
+    credits: getCredits(summary, plays),
+  };
+};
